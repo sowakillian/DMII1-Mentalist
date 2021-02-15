@@ -14,30 +14,24 @@ class ScanViewController: UIViewController {
     @IBOutlet weak var writeTextField: UITextField!
     var periph:CBPeripheral?
     @IBOutlet weak var tableView: UITableView!
-    var periphList:[[CBPeripheral:String]] = []
+    var periphList:[BluetoothPeripheral] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+
         tableView.delegate = self
         tableView.dataSource = self
-        
-        
     }
     
     @IBAction func scanClicked(_ sender: Any) {
         startScan()
     }
     
-    
     func startScan() {
-        print("scan start")
         BLEManager.instance.scan { periph, name  in
-            print("**")
             print(periph, name)
             if name == "jacky" {
-                print("i found peripheral")
-                self.periphList.append([periph:name])
+                self.periphList.append(BluetoothPeripheral(coreBluetoothItem: periph, name: name))
                 self.tableView.reloadData()
                 BLEManager.instance.stopScan()
             }
@@ -48,15 +42,15 @@ class ScanViewController: UIViewController {
 
 extension ScanViewController:UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let periph = periphList[indexPath.row].keys.first {
-            BLEManager.instance.connectPeripheral(periph) { per in
-                self.periph = periph
+        let periph = periphList[indexPath.row].coreBluetoothItem
+        
+        BLEManager.instance.connectPeripheral(periph) { per in
+            self.periph = periph
+            
+            BLEManager.instance.discoverPeripheral(per) { (periphReady) in
+                self.periphReady = true
                 
-                BLEManager.instance.discoverPeripheral(per) { (periphReady) in
-                    self.periphReady = true
-                    
-                    self.performSegue(withIdentifier: "toCommunication", sender: nil)
-                }
+                self.performSegue(withIdentifier: "toCommunication", sender: nil)
             }
         }
     }
@@ -70,7 +64,7 @@ extension ScanViewController:UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PeriphNameCell")! as UITableViewCell
-        cell.textLabel?.text = periphList[indexPath.row].values.first
+        cell.textLabel?.text = periphList[indexPath.row].name
         return cell
     }
     

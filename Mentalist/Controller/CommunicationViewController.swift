@@ -64,7 +64,7 @@ class CommunicationViewController:UIViewController {
                         self.editHistory(message: stringItem, received: false)
                         if let characterAsData = stringItem.data(using: .utf8) {
                             BLEManager.instance.sendData(data: characterAsData) { success in
-                                
+                            
                             }
                         }
                     }
