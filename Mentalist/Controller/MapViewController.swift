@@ -30,10 +30,14 @@ class MapViewController:UIViewController {
     private func setTownLocation(town: String) {
         self.locationManager.getLocation(forPlaceCalled: town) { location in
             guard let location = location else { return }
+
             
             let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+            let pin = MKPlacemark(coordinate: center)
+            
             let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
             self.mapView.setRegion(region, animated: true)
+            self.mapView.addAnnotation(pin)
         }
     }
     
@@ -41,9 +45,16 @@ class MapViewController:UIViewController {
         BLEManager.instance.readMapData() { (message) in
             print(message)
             if let message = message {
+                BLEManager.instance.history.append(HistoryItem(message: message, received: true))
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "historyEdited"), object: nil)
+                
                 self.setTownLocation(town: message)
-                self.historyList.append(message)
-                self.historyCollectionView.reloadData()
+                
+                if !self.historyList.contains(message) {
+                    self.historyList.append(message)
+                    self.historyCollectionView.reloadData()
+                }
+
             }
 
         }
