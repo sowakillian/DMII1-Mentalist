@@ -15,7 +15,7 @@ class CommunicationViewController:UIViewController {
     var readingState: Int = 0
     var moodStrings: [String:String] = ["content": "", "pas content": "", "pourquoi j'ai choisi DMII?": ""]
     
-    var splittedString: [String] = ["a", "z", "o", "h", "z", "l"]
+    var splittedString: [String] = []
     
 
     override func viewDidLoad() {
