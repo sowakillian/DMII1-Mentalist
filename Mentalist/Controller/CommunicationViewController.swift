@@ -30,15 +30,17 @@ class CommunicationViewController:UIViewController {
     @IBAction func writeClicked(_ sender: Any) {
         print("write clicked")
         if let data = writeTextField.text?.data(using: .utf8) {
-            print(data, writeTextField.text)
             BLEManager.instance.sendData(data: data) { success in
                 print("data successfully written")
                 BLEManager.instance.history.append(HistoryItem(message: String(decoding: data, as: UTF8.self), received: false))
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "historyEdited"), object: nil)
             }
-        } else {
-            print("no text in textifled")
         }
+    }
+    
+    func editHistory(message: String, received: Bool) {
+        BLEManager.instance.history.append(HistoryItem(message: message, received: received))
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "historyEdited"), object: nil)
     }
     
     @IBAction func readClicked(_ sender: Any) {
@@ -48,24 +50,21 @@ class CommunicationViewController:UIViewController {
         BLEManager.instance.readData() { (message) in
             
             if let message = message {
-                print("message", message)
                 self.splittedString = message.components(separatedBy: ":")
                 
                 if self.readingState == 1 {
                     self.splittedString.reverse()
                 }
                 
-                print("readingState", self.readingState)
-                BLEManager.instance.history.append(HistoryItem(message: message, received: true))
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "historyEdited"), object: nil)
+                self.editHistory(message: message, received: true)
                 print(self.splittedString)
                 
                 if self.readingState == 0 || self.readingState == 1 {
                     self.splittedString.forEach { (stringItem) in
+                        self.editHistory(message: stringItem, received: false)
                         if let characterAsData = stringItem.data(using: .utf8) {
                             BLEManager.instance.sendData(data: characterAsData) { success in
-                                BLEManager.instance.history.append(HistoryItem(message: stringItem, received: false))
-                                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "historyEdited"), object: nil)
+                                
                             }
                         }
                     }
@@ -95,18 +94,19 @@ class CommunicationViewController:UIViewController {
     
                         if smallest == distanceHappy {
                             BLEManager.instance.sendData(data: "content".data(using: .utf8)!) { success in
-
+                                self.editHistory(message: "content", received: false)
                             }
                         }
                         
                         if smallest == distanceSad {
                             BLEManager.instance.sendData(data: "pas content".data(using: .utf8)!) { success in
-
+                                self.editHistory(message: "pas content", received: false)
                             }
                         }
                         
                         if smallest == distanceWhy {
                             BLEManager.instance.sendData(data: "pourquoi j'ai choisi DMII?".data(using: .utf8)!) { success in
+                                self.editHistory(message: "pourquoi j'ai choisi DMII?", received: false)
                             }
                         }
                     }

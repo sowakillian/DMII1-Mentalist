@@ -233,7 +233,7 @@
                         <viewLayoutGuide key="safeArea" id="5qM-7F-v0h"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Communication" id="JPY-kT-QOv"/>
+                    <tabBarItem key="tabBarItem" title="Communication" image="003-contract" id="JPY-kT-QOv"/>
                     <navigationItem key="navigationItem" id="R6y-rB-tnF"/>
                     <connections>
                         <outlet property="readCollectionView" destination="0jE-5R-gt1" id="ofo-p8-2Zx"/>
@@ -278,7 +278,7 @@
                         <viewLayoutGuide key="safeArea" id="bKT-wx-ICe"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Historique" id="Y3E-fB-VlD"/>
+                    <tabBarItem key="tabBarItem" title="Historique" image="002-folder" id="Y3E-fB-VlD"/>
                     <connections>
                         <outlet property="tableView" destination="5r5-zB-zez" id="SgH-N2-FT5"/>
                     </connections>
@@ -439,7 +439,7 @@
                             <constraint firstItem="sQa-ZX-WRK" firstAttribute="trailing" secondItem="JmL-fz-PSl" secondAttribute="trailing" id="ptu-nf-bWY"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Map" id="GiM-tT-bV8"/>
+                    <tabBarItem key="tabBarItem" title="Map" image="001-location" id="GiM-tT-bV8"/>
                     <connections>
                         <outlet property="historyCollectionView" destination="JmL-fz-PSl" id="FEv-cP-ahy"/>
                         <outlet property="mapView" destination="hwQ-hX-21y" id="PaM-ce-Zss"/>
@@ -451,6 +451,9 @@
         </scene>
     </scenes>
     <resources>
+        <image name="001-location" width="12" height="12"/>
+        <image name="002-folder" width="12" height="12"/>
+        <image name="003-contract" width="12" height="12"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
