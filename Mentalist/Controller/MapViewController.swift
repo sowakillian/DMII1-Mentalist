@@ -14,8 +14,6 @@ class MapViewController:UIViewController {
     @IBOutlet weak var historyCollectionView: UICollectionView!
     var historyList:[String] = []
     @IBOutlet weak var mapView: MKMapView!
-    
-    // - Constants
     private let locationManager = LocationManager()
     
     override func viewDidLoad() {
@@ -38,16 +36,17 @@ class MapViewController:UIViewController {
             annotation.title = town
             
             let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+            
             self.mapView.setRegion(region, animated: true)
             self.mapView.addAnnotation(annotation)
-            
         }
     }
     
     @IBAction func readClicked(_ sender: Any) {
         BLEManager.instance.readMapData() { (message) in
             if let message = message {
-                BLEManager.instance.history.append(HistoryItem(message: message, received: true))
+                
+                HistoryManager.instance.history.append(HistoryItem(message: message, received: true))
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "historyEdited"), object: nil)
                 
                 self.setTownLocation(town: message)
@@ -61,10 +60,6 @@ class MapViewController:UIViewController {
 
         }
     }
-}
-
-extension MapViewController:UICollectionViewDelegate {
-    
 }
 
 extension MapViewController: UICollectionViewDelegateFlowLayout {

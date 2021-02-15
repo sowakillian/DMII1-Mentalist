@@ -31,15 +31,14 @@ class CommunicationViewController:UIViewController {
         print("write clicked")
         if let data = writeTextField.text?.data(using: .utf8) {
             BLEManager.instance.sendData(data: data) { success in
-                print("data successfully written")
-                BLEManager.instance.history.append(HistoryItem(message: String(decoding: data, as: UTF8.self), received: false))
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "historyEdited"), object: nil)
+                self.editHistory(message: String(decoding: data, as: UTF8.self), received: false)
             }
         }
     }
     
     func editHistory(message: String, received: Bool) {
-        BLEManager.instance.history.append(HistoryItem(message: message, received: received))
+        print("i edit history")
+        HistoryManager.instance.history.append(HistoryItem(message: message, received: received))
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "historyEdited"), object: nil)
     }
     
@@ -55,11 +54,11 @@ class CommunicationViewController:UIViewController {
                 if self.readingState == 1 {
                     self.splittedString.reverse()
                 }
-                
-                self.editHistory(message: message, received: true)
+            
                 print(self.splittedString)
                 
                 if self.readingState == 0 || self.readingState == 1 {
+                    self.editHistory(message: message, received: true)
                     self.splittedString.forEach { (stringItem) in
                         self.editHistory(message: stringItem, received: false)
                         if let characterAsData = stringItem.data(using: .utf8) {
@@ -72,6 +71,7 @@ class CommunicationViewController:UIViewController {
                 }
                 
                 if self.readingState == 2 {
+                    self.editHistory(message: message, received: true)
                     print("i get datas")
                     self.moodStrings["content"] = self.splittedString[0]
                     self.moodStrings["pas content"] = self.splittedString[1]
@@ -80,6 +80,7 @@ class CommunicationViewController:UIViewController {
                 }
                 
                 if self.readingState == 3 {
+                    self.editHistory(message: message, received: true)
                     print("message", message)
                     
                     if let happy = self.moodStrings["content"], let sadValue = self.moodStrings["pas content"], let whyValue = self.moodStrings["pourquoi j'ai choisi DMII?"] {

@@ -11,7 +11,6 @@ import CoreBluetooth
 class BLEManager: NSObject {
     static let instance = BLEManager()
     
-    var history: [HistoryItem] = []
     var isBLEEnabled = false
     var isScanning = false
     let authCBUUID = CBUUID(string: "499D456C-8691-4D00-87E2-8A34FB7551A3")
@@ -184,6 +183,7 @@ extension BLEManager: CBCentralManagerDelegate {
         messageReceivedCallback?(characteristic.value)
         if let value = characteristic.value {
             print("value")
+            print("**ohhhh value mamene")
             readDataCallback?(String(decoding: value, as: UTF8.self))
             readMapDataCallback?(String(decoding: value, as: UTF8.self))
         } else {

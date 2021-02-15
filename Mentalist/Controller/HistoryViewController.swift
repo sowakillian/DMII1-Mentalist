@@ -41,16 +41,16 @@ extension HistoryViewController:UITableViewDelegate {
 extension HistoryViewController:UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return BLEManager.instance.history.count
+        return HistoryManager.instance.history.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "historyItemCell")! as UITableViewCell
         
-        if BLEManager.instance.history[indexPath.row].received == true {
-            cell.textLabel?.text = "Reçu : \(BLEManager.instance.history[indexPath.row].message)"
+        if HistoryManager.instance.history[indexPath.row].received == true {
+            cell.textLabel?.text = "Reçu : \(HistoryManager.instance.history[indexPath.row].message)"
         } else {
-            cell.textLabel?.text = "Envoyé : \(BLEManager.instance.history[indexPath.row].message)"
+            cell.textLabel?.text = "Envoyé : \(HistoryManager.instance.history[indexPath.row].message)"
         }
         return cell
     }

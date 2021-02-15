@@ -10,5 +10,5 @@ import Foundation
 class HistoryManager {
     static let instance = HistoryManager()
     
-    
+    var history: [HistoryItem] = []
 }
