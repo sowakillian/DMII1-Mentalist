@@ -346,9 +346,18 @@
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Y9-X2-LE6">
                                 <rect key="frame" x="0.0" y="167" width="414" height="291"/>
+                                <subviews>
+                                    <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="hwQ-hX-21y">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="291"/>
+                                    </mapView>
+                                </subviews>
                                 <color key="backgroundColor" red="0.27058823529999998" green="0.28235294119999998" blue="0.89841578109999998" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="291" id="8dS-DX-8Ls"/>
+                                    <constraint firstItem="hwQ-hX-21y" firstAttribute="top" secondItem="8Y9-X2-LE6" secondAttribute="top" id="Pf4-Ca-eit"/>
+                                    <constraint firstAttribute="bottom" secondItem="hwQ-hX-21y" secondAttribute="bottom" id="VfC-xS-zc6"/>
+                                    <constraint firstItem="hwQ-hX-21y" firstAttribute="leading" secondItem="8Y9-X2-LE6" secondAttribute="leading" id="gyp-8E-icy"/>
+                                    <constraint firstAttribute="trailing" secondItem="hwQ-hX-21y" secondAttribute="trailing" id="yM6-kx-F6m"/>
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Historique" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="McJ-YO-YKo">
@@ -432,6 +441,7 @@
                     <tabBarItem key="tabBarItem" title="Map" id="GiM-tT-bV8"/>
                     <connections>
                         <outlet property="historyCollectionView" destination="JmL-fz-PSl" id="FEv-cP-ahy"/>
+                        <outlet property="mapView" destination="hwQ-hX-21y" id="PaM-ce-Zss"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U60-so-edi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

@@ -112,6 +112,15 @@ class BLEManager: NSObject {
         }
     }
     
+    func readMapData(callback: @escaping (String?) -> ()) {
+        readMapDataCallback = callback
+        for periph in readyPeripherals {
+            if let char = BLEManager.instance.getCharForUUID(mapReadCBUUID, forperipheral: periph) {
+                periph.readValue(for: char)
+            }
+        }
+    }
+    
 }
 
 extension BLEManager: CBPeripheralDelegate {
@@ -176,6 +185,7 @@ extension BLEManager: CBCentralManagerDelegate {
         if let value = characteristic.value {
             print("value")
             readDataCallback?(String(decoding: value, as: UTF8.self))
+            readMapDataCallback?(String(decoding: value, as: UTF8.self))
         } else {
             print("naze")
         }
