@@ -81,6 +81,7 @@ extension MapViewController:UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = historyCollectionView.dequeueReusableCell(withReuseIdentifier: "HistoryCollectionViewCell", for: indexPath) as! HistoryCollectionViewCell
         cell.cityLabel.text = historyList[indexPath.row]
+        cell.contentView.layer.cornerRadius = 10
         return cell
     }
     

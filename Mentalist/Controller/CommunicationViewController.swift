@@ -142,6 +142,7 @@ extension CommunicationViewController:UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = readCollectionView.dequeueReusableCell(withReuseIdentifier: "ReadCollectionViewCell", for: indexPath) as! ReadCollectionViewCell
         cell.characterLabel.text = splittedString[indexPath.row]
+        cell.contentView.layer.cornerRadius = 5
         return cell
     }
     

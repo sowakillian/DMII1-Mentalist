@@ -10,4 +10,9 @@ import UIKit
 class ReadCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var characterLabel: UILabel!
     
+    
+    override class func awakeFromNib() {
+        super.awakeFromNib()
+        
+    }
 }

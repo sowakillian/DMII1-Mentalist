@@ -10,6 +10,8 @@ import CoreBluetooth
 
 class ScanViewController: UIViewController {
     
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var scanButton: Button!
     var periphReady = false
     @IBOutlet weak var writeTextField: UITextField!
     var periph:CBPeripheral?
@@ -24,13 +26,19 @@ class ScanViewController: UIViewController {
     }
     
     @IBAction func scanClicked(_ sender: Any) {
+        
         startScan()
     }
     
     func startScan() {
+        activityIndicator.startAnimating()
+        scanButton.setTitle("", for: .normal)
+        
         BLEManager.instance.scan { periph, name  in
             print(periph, name)
             if name == "jacky" {
+                self.activityIndicator.stopAnimating()
+                self.scanButton.setTitle("Scan", for: .normal)
                 self.periphList.append(BluetoothPeripheral(coreBluetoothItem: periph, name: name))
                 self.tableView.reloadData()
                 BLEManager.instance.stopScan()
