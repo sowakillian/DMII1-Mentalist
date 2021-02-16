@@ -22,7 +22,8 @@ class CommunicationManager {
     
     func sendSplittedStringCharacters(completionBlock: @escaping (_ success: Bool) -> Void) {
         self.splittedString.forEach { (stringItem) in
-            //self.editHistory(message: stringItem, received: false)
+            HistoryManager.instance.editHistory(message: stringItem, received: false)
+            
             if let characterAsData = stringItem.data(using: .utf8) {
                 BLEManager.instance.sendData(data: characterAsData) { success in
                     
@@ -40,6 +41,7 @@ class CommunicationManager {
     }
     
     func compareAndReturnMoodString(messageReceived: String, completionHandler: @escaping (_ message: String) -> Void) {
+        
         if let happyValue = self.moodStrings["content"],
            let sadValue = self.moodStrings["pas content"],
            let whyValue = self.moodStrings["pourquoi j'ai choisi DMII?"] {
@@ -56,9 +58,6 @@ class CommunicationManager {
                     minValue = distance
                 }
             }
-            
-            print(minValue)
-            print(distanceHappy, distanceSad, distanceWhy)
             
             switch minValue {
             case distanceHappy:
@@ -77,7 +76,7 @@ class CommunicationManager {
                     completionHandler(messageToSend)
                 }
             default:
-                print("nothing")
+                print("minValue error")
             }
         }
     }

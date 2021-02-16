@@ -23,15 +23,10 @@ class CommunicationViewController:UIViewController {
         self.hideKeyboardWhenTappedAround()
     }
     
-    func editHistory(message: String, received: Bool) {
-        HistoryManager.instance.history.append(HistoryItem(message: message, received: received))
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "historyEdited"), object: nil)
-    }
-    
     @IBAction func writeClicked(_ sender: Any) {
         if let data = writeTextField.text?.data(using: .utf8) {
             BLEManager.instance.sendData(data: data) { success in
-                self.editHistory(message: String(decoding: data, as: UTF8.self), received: false)
+                HistoryManager.instance.editHistory(message: String(decoding: data, as: UTF8.self), received: false)
             }
         }
     }
@@ -46,27 +41,27 @@ class CommunicationViewController:UIViewController {
                 
                 switch self.communicationManager.readingState {
                 case 0:
-                    self.editHistory(message: message, received: true)
+                    HistoryManager.instance.editHistory(message: message, received: true)
                     
                     self.communicationManager.sendSplittedStringCharacters { (success) in
                         self.readCollectionView.reloadData()
                     }
                 case 1:
-                    self.editHistory(message: message, received: true)
+                    HistoryManager.instance.editHistory(message: message, received: true)
                     self.communicationManager.splittedString.reverse()
                     
                     self.communicationManager.sendSplittedStringCharacters { (success) in
                         self.readCollectionView.reloadData()
                     }
                 case 2:
-                    self.editHistory(message: message, received: true)
+                    HistoryManager.instance.editHistory(message: message, received: true)
                     
                     self.communicationManager.attributeValuesToMoodStrings()
                 case 3:
-                    self.editHistory(message: message, received: true)
+                    HistoryManager.instance.editHistory(message: message, received: true)
                     
                     self.communicationManager.compareAndReturnMoodString(messageReceived: message) { messageToSend in
-                        self.editHistory(message: messageToSend, received: false)
+                        HistoryManager.instance.editHistory(message: messageToSend, received: false)
                     }
                 default:
                     print("unused readingState")

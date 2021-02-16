@@ -23,14 +23,9 @@ class ScanViewController: UIViewController {
 
         tableView.delegate = self
         tableView.dataSource = self
-        
-        print("jacky".distance(between: "zeubi"))
-        print("jacky".distance(between: "jacko"))
-        print("jacky".distance(between: "zoubi"))
     }
     
     @IBAction func scanClicked(_ sender: Any) {
-        
         startScan()
     }
     

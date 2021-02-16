@@ -320,7 +320,7 @@
         <!--Tab Bar Controller-->
         <scene sceneID="tRd-7h-128">
             <objects>
-                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="gBC-BS-28m" sceneMemberID="viewController">
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="fullScreen" id="gBC-BS-28m" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="Mb2-A3-XNu"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="MJm-s0-JwE">
