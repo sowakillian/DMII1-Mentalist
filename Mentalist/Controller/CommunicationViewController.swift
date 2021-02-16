@@ -12,9 +12,8 @@ import StringMetric
 class CommunicationViewController:UIViewController {
     @IBOutlet weak var writeTextField: UITextField!
     @IBOutlet weak var readCollectionView: UICollectionView!
-    var readingState: Int = 0
     var moodStrings: [String:String] = ["content": "", "pas content": "", "pourquoi j'ai choisi DMII?": ""]
-    var splittedString: [String] = []
+    let communicationManager = CommunicationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,53 +38,34 @@ class CommunicationViewController:UIViewController {
     }
     
     @IBAction func readClicked(_ sender: Any) {
-        print("read clicked")
-        self.splittedString = []
+        communicationManager.splittedString = []
         
         BLEManager.instance.readData() { (message) in
             
             if let message = message {
-                self.splittedString = message.components(separatedBy: ":")
+                self.communicationManager.splittedString = message.components(separatedBy: ":")
                 
-                switch self.readingState {
+                switch self.communicationManager.readingState {
                 case 0:
-                    print("case 0")
                     self.editHistory(message: message, received: true)
                     
-                    self.splittedString.forEach { (stringItem) in
-                        self.editHistory(message: stringItem, received: false)
-                        if let characterAsData = stringItem.data(using: .utf8) {
-                            BLEManager.instance.sendData(data: characterAsData) { success in
-                                
-                            }
-                        }
+                    self.communicationManager.sendSplittedStringCharacters { (success) in
+                        self.readCollectionView.reloadData()
                     }
-                    
-                    self.readCollectionView.reloadData()
-                    
                 case 1:
-                    print("case 1")
-                    self.splittedString.reverse()
+                    self.communicationManager.splittedString.reverse()
                     
                     self.editHistory(message: message, received: true)
                     
-                    self.splittedString.forEach { (stringItem) in
-                        self.editHistory(message: stringItem, received: false)
-                        if let characterAsData = stringItem.data(using: .utf8) {
-                            BLEManager.instance.sendData(data: characterAsData) { success in
-                                
-                            }
-                        }
+                    self.communicationManager.sendSplittedStringCharacters { (success) in
+                        self.readCollectionView.reloadData()
                     }
-                    
-                    self.readCollectionView.reloadData()
-                    
                 case 2:
                     self.editHistory(message: message, received: true)
                     
-                    self.moodStrings["content"] = self.splittedString[0]
-                    self.moodStrings["pas content"] = self.splittedString[1]
-                    self.moodStrings["pourquoi j'ai choisi DMII?"] = self.splittedString[2]
+                    self.moodStrings["content"] = self.communicationManager.splittedString[0]
+                    self.moodStrings["pas content"] = self.communicationManager.splittedString[1]
+                    self.moodStrings["pourquoi j'ai choisi DMII?"] = self.communicationManager.splittedString[2]
                     
                 case 3:
                     self.editHistory(message: message, received: true)
@@ -126,7 +106,7 @@ class CommunicationViewController:UIViewController {
                     print("unused readingState")
                 }
                 
-                self.readingState += 1
+                self.communicationManager.readingState += 1
                 
             }
             
@@ -150,12 +130,12 @@ extension CommunicationViewController: UICollectionViewDelegateFlowLayout {
 
 extension CommunicationViewController:UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        splittedString.count
+        self.communicationManager.splittedString.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = readCollectionView.dequeueReusableCell(withReuseIdentifier: "ReadCollectionViewCell", for: indexPath) as! ReadCollectionViewCell
-        cell.characterLabel.text = splittedString[indexPath.row]
+        cell.characterLabel.text = self.communicationManager.splittedString[indexPath.row]
         cell.contentView.layer.cornerRadius = 5
         return cell
     }
