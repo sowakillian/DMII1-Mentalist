@@ -12,7 +12,6 @@ import StringMetric
 class CommunicationViewController:UIViewController {
     @IBOutlet weak var writeTextField: UITextField!
     @IBOutlet weak var readCollectionView: UICollectionView!
-    var moodStrings: [String:String] = ["content": "", "pas content": "", "pourquoi j'ai choisi DMII?": ""]
     let communicationManager = CommunicationManager()
     
     override func viewDidLoad() {
@@ -53,9 +52,8 @@ class CommunicationViewController:UIViewController {
                         self.readCollectionView.reloadData()
                     }
                 case 1:
-                    self.communicationManager.splittedString.reverse()
-                    
                     self.editHistory(message: message, received: true)
+                    self.communicationManager.splittedString.reverse()
                     
                     self.communicationManager.sendSplittedStringCharacters { (success) in
                         self.readCollectionView.reloadData()
@@ -63,45 +61,13 @@ class CommunicationViewController:UIViewController {
                 case 2:
                     self.editHistory(message: message, received: true)
                     
-                    self.moodStrings["content"] = self.communicationManager.splittedString[0]
-                    self.moodStrings["pas content"] = self.communicationManager.splittedString[1]
-                    self.moodStrings["pourquoi j'ai choisi DMII?"] = self.communicationManager.splittedString[2]
-                    
+                    self.communicationManager.attributeValuesToMoodStrings()
                 case 3:
                     self.editHistory(message: message, received: true)
-                    print("message", message)
                     
-                    if let happyValue = self.moodStrings["content"], let sadValue = self.moodStrings["pas content"], let whyValue = self.moodStrings["pourquoi j'ai choisi DMII?"] {
-                        let distanceHappy = message.distance(between: happyValue)
-                        let distanceSad = message.distance(between: sadValue)
-                        let distanceWhy = message.distance(between: whyValue)
-                        
-                        print(message, happyValue, sadValue, whyValue)
-                        
-                        let smallest = min(distanceHappy, distanceSad, distanceWhy)
-                        
-                        print(smallest, "smallest")
-                        print(distanceHappy, distanceSad, distanceWhy)
-                        
-                        if smallest == distanceHappy {
-                            BLEManager.instance.sendData(data: "content".data(using: .utf8)!) { success in
-                                self.editHistory(message: "content", received: false)
-                            }
-                        }
-                        
-                        if smallest == distanceSad {
-                            BLEManager.instance.sendData(data: "pas content".data(using: .utf8)!) { success in
-                                self.editHistory(message: "pas content", received: false)
-                            }
-                        }
-                        
-                        if smallest == distanceWhy {
-                            BLEManager.instance.sendData(data: "pourquoi j'ai choisi DMII?".data(using: .utf8)!) { success in
-                                self.editHistory(message: "pourquoi j'ai choisi DMII?", received: false)
-                            }
-                        }
+                    self.communicationManager.compareAndReturnMoodString(messageReceived: message) { messageToSend in
+                        self.editHistory(message: messageToSend, received: false)
                     }
-                
                 default:
                     print("unused readingState")
                 }
