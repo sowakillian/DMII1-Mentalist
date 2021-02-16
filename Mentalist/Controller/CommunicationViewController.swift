@@ -14,10 +14,8 @@ class CommunicationViewController:UIViewController {
     @IBOutlet weak var readCollectionView: UICollectionView!
     var readingState: Int = 0
     var moodStrings: [String:String] = ["content": "", "pas content": "", "pourquoi j'ai choisi DMII?": ""]
-    
     var splittedString: [String] = []
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -27,19 +25,17 @@ class CommunicationViewController:UIViewController {
         self.hideKeyboardWhenTappedAround()
     }
     
+    func editHistory(message: String, received: Bool) {
+        HistoryManager.instance.history.append(HistoryItem(message: message, received: received))
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "historyEdited"), object: nil)
+    }
+    
     @IBAction func writeClicked(_ sender: Any) {
-        print("write clicked")
         if let data = writeTextField.text?.data(using: .utf8) {
             BLEManager.instance.sendData(data: data) { success in
                 self.editHistory(message: String(decoding: data, as: UTF8.self), received: false)
             }
         }
-    }
-    
-    func editHistory(message: String, received: Bool) {
-        print("i edit history")
-        HistoryManager.instance.history.append(HistoryItem(message: message, received: received))
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "historyEdited"), object: nil)
     }
     
     @IBAction func readClicked(_ sender: Any) {
@@ -51,48 +47,62 @@ class CommunicationViewController:UIViewController {
             if let message = message {
                 self.splittedString = message.components(separatedBy: ":")
                 
-                if self.readingState == 1 {
-                    self.splittedString.reverse()
-                }
-            
-                print(self.splittedString)
-                
-                if self.readingState == 0 || self.readingState == 1 {
+                switch self.readingState {
+                case 0:
+                    print("case 0")
                     self.editHistory(message: message, received: true)
+                    
                     self.splittedString.forEach { (stringItem) in
                         self.editHistory(message: stringItem, received: false)
                         if let characterAsData = stringItem.data(using: .utf8) {
                             BLEManager.instance.sendData(data: characterAsData) { success in
-                            
+                                
                             }
                         }
                     }
+                    
                     self.readCollectionView.reloadData()
-                }
-                
-                if self.readingState == 2 {
+                    
+                case 1:
+                    print("case 1")
+                    self.splittedString.reverse()
+                    
                     self.editHistory(message: message, received: true)
-                    print("i get datas")
+                    
+                    self.splittedString.forEach { (stringItem) in
+                        self.editHistory(message: stringItem, received: false)
+                        if let characterAsData = stringItem.data(using: .utf8) {
+                            BLEManager.instance.sendData(data: characterAsData) { success in
+                                
+                            }
+                        }
+                    }
+                    
+                    self.readCollectionView.reloadData()
+                    
+                case 2:
+                    self.editHistory(message: message, received: true)
+                    
                     self.moodStrings["content"] = self.splittedString[0]
                     self.moodStrings["pas content"] = self.splittedString[1]
                     self.moodStrings["pourquoi j'ai choisi DMII?"] = self.splittedString[2]
-                    print(self.moodStrings)
-                }
-                
-                if self.readingState == 3 {
+                    
+                case 3:
                     self.editHistory(message: message, received: true)
                     print("message", message)
                     
-                    if let happy = self.moodStrings["content"], let sadValue = self.moodStrings["pas content"], let whyValue = self.moodStrings["pourquoi j'ai choisi DMII?"] {
-                        let distanceHappy = message.distance(between: happy)
+                    if let happyValue = self.moodStrings["content"], let sadValue = self.moodStrings["pas content"], let whyValue = self.moodStrings["pourquoi j'ai choisi DMII?"] {
+                        let distanceHappy = message.distance(between: happyValue)
                         let distanceSad = message.distance(between: sadValue)
                         let distanceWhy = message.distance(between: whyValue)
+                        
+                        print(message, happyValue, sadValue, whyValue)
                         
                         let smallest = min(distanceHappy, distanceSad, distanceWhy)
                         
                         print(smallest, "smallest")
                         print(distanceHappy, distanceSad, distanceWhy)
-    
+                        
                         if smallest == distanceHappy {
                             BLEManager.instance.sendData(data: "content".data(using: .utf8)!) { success in
                                 self.editHistory(message: "content", received: false)
@@ -111,12 +121,15 @@ class CommunicationViewController:UIViewController {
                             }
                         }
                     }
-
+                
+                default:
+                    print("unused readingState")
                 }
-
+                
+                self.readingState += 1
+                
             }
             
-            self.readingState += 1
         }
         
     }
