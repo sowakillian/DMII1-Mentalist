@@ -11,7 +11,7 @@ import UIKit
 class HistoryViewController:UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
-    var historyList:[String] = ["zz", "zz", "zz"]
+    var historyList:[String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
