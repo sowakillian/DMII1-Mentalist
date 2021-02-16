@@ -62,6 +62,12 @@ class MapViewController:UIViewController {
     }
 }
 
+extension MapViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        setTownLocation(town: historyList[indexPath.row])
+    }
+}
+
 extension MapViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 128, height: 128)
