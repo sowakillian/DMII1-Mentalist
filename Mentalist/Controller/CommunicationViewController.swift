@@ -75,13 +75,8 @@ class CommunicationViewController:UIViewController {
                 self.communicationManager.readingState += 1
                 
             }
-            
         }
-        
     }
-    
-    
-    
 }
 
 extension CommunicationViewController:UICollectionViewDelegate {

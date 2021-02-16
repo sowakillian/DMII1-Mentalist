@@ -48,32 +48,36 @@ class CommunicationManager {
             let distanceSad = messageReceived.distance(between: sadValue)
             let distanceWhy = messageReceived.distance(between: whyValue)
             
-            print(messageReceived, happyValue, sadValue, whyValue)
+            let distancesArray = [distanceHappy, distanceSad, distanceWhy]
+            var minValue:Double = 1
             
-            let smallest = min(distanceHappy, distanceSad, distanceWhy)
+            distancesArray.forEach { (distance) in
+                if distance < minValue {
+                    minValue = distance
+                }
+            }
             
-            print(smallest, "smallest")
+            print(minValue)
             print(distanceHappy, distanceSad, distanceWhy)
             
-            if smallest == distanceHappy {
+            switch minValue {
+            case distanceHappy:
                 let messageToSend = "content"
                 BLEManager.instance.sendData(data: messageToSend.data(using: .utf8)!) { success in
                     completionHandler(messageToSend)
                 }
-            }
-            
-            if smallest == distanceSad {
+            case distanceSad:
                 let messageToSend = "pas content"
                 BLEManager.instance.sendData(data: messageToSend.data(using: .utf8)!) { success in
                     completionHandler(messageToSend)
                 }
-            }
-            
-            if smallest == distanceWhy {
+            case distanceWhy:
                 let messageToSend = "pourquoi j'ai choisi DMII?"
                 BLEManager.instance.sendData(data: messageToSend.data(using: .utf8)!) { success in
                     completionHandler(messageToSend)
                 }
+            default:
+                print("nothing")
             }
         }
     }
