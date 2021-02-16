@@ -29,7 +29,6 @@ class BLEManager: NSObject {
     var sendDataCallback: ((String?) -> ())?
     var readDataCallback: ((String?) -> ())?
     var readMapDataCallback: ((String?) -> ())?
-    var messageReceivedCallback:((Data?)->())?
     
     override init() {
         super.init()
@@ -50,10 +49,6 @@ class BLEManager: NSObject {
     func stopScan() {
         isScanning = false
         centralManager?.stopScan()
-    }
-    
-    func listenForMessages(callback:@escaping(Data?)->()) {
-        messageReceivedCallback = callback
     }
     
     func connectPeripheral(_ periph: CBPeripheral, callback: @escaping (CBPeripheral) -> ()) {
@@ -180,12 +175,17 @@ extension BLEManager: CBCentralManagerDelegate {
         print("UPDATE!!!")
         print("char = \(characteristic.value)")
         
-        messageReceivedCallback?(characteristic.value)
         if let value = characteristic.value {
-            print("value")
-            print("**ohhhh value mamene")
-            readDataCallback?(String(decoding: value, as: UTF8.self))
-            readMapDataCallback?(String(decoding: value, as: UTF8.self))
+            let valueConverted = String(decoding: value, as: UTF8.self)
+            
+            if let firstCharacter = valueConverted.first {
+                if firstCharacter.isUppercase {
+                    readMapDataCallback?(String(decoding: value, as: UTF8.self))
+                } else {
+                    readDataCallback?(String(decoding: value, as: UTF8.self))
+                }
+            }
+
         } else {
             print("naze")
         }
